@@ -1,0 +1,11 @@
+# config/weaviate_connection_config.yaml
+weaviate_url: "http://localhost:8080"
+grpc_port: 8081
+
+# Bedrock vectorizer configuration
+vectorizer_module_config:
+  name: "text2vec-aws"
+  aws_region: "us-east-1"
+  bedrock:
+    model: "cohere.embed-english-v3"
+    region: "us-east-1"

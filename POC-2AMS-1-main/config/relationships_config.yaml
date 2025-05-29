@@ -1,0 +1,248 @@
+relationships:
+  # Customer to Move Orders relationship (Primary)
+  - relationship_name: "customer_to_moves"
+    from_table: "raw_move_orders"
+    from_column: "ID"
+    to_table: "raw_customer_master"
+    to_column: "ID"
+    relationship_type: "foreign_key"
+    cardinality: "many-to-one"
+    suggested_join_type: "INNER"
+    business_meaning: >
+      Links each move order to the customer who requested it. A customer can have 
+      multiple moves over time, but each move belongs to exactly one customer. 
+      This is the primary relationship for analyzing customer move history, 
+      service patterns, and customer lifetime value.
+    
+  # Move Orders to Daily Operations relationship
+  - relationship_name: "moves_to_daily_operations"
+    from_table: "raw_movedaily_operations"
+    from_column: "ID"
+    to_table: "raw_move_orders"
+    to_column: "ID"
+    relationship_type: "foreign_key"
+    cardinality: "many-to-one"
+    suggested_join_type: "INNER"
+    business_meaning: >
+      Links daily operational data to the specific move order it belongs to. Each 
+      move order can have multiple daily operation records (for complex multi-day moves), 
+      but each daily operation record belongs to exactly one move. This relationship 
+      enables analysis of operational efficiency, pricing breakdowns, and service delivery 
+      metrics at the move level.
+
+  # Direct Customer to Daily Operations (derived relationship)
+  - relationship_name: "customer_to_daily_operations"
+    from_table: "raw_movedaily_operations"
+    from_column: "ID"
+    to_table: "raw_customer_master"
+    to_column: "ID"
+    relationship_type: "derived_foreign_key"
+    cardinality: "many-to-one"
+    suggested_join_type: "INNER"
+    business_meaning: >
+      Enables direct analysis of customer daily operations through the move orders 
+      relationship chain. This derived relationship allows for efficient customer-level 
+      financial analysis, revenue tracking, and operational performance measurement 
+      without requiring explicit join through the move orders table.
+
+# Additional relationship patterns for complex queries
+query_patterns:
+  # Three-way joins for comprehensive analysis
+  - pattern_name: "customer_move_financial_analysis"
+    description: "Complete customer and financial performance analysis"
+    tables:
+      - "raw_customer_master"
+      - "raw_move_orders" 
+      - "raw_movedaily_operations"
+    join_logic: >
+      SELECT c.*, m.*, d.* 
+      FROM raw_customer_master c
+      INNER JOIN raw_move_orders m ON c.ID = m.CustomerID
+      INNER JOIN raw_movedaily_operations d ON m.ID = d.MoveID
+    business_use_case: >
+      Comprehensive customer analysis combining customer data, complete move history, 
+      and detailed financial/operational metrics for revenue analysis, customer 
+      lifetime value calculations, and operational efficiency measurement.
+      
+  - pattern_name: "customer_revenue_summary"
+    description: "Customer with aggregated revenue and move statistics"
+    tables:
+      - "raw_customer_master"
+      - "raw_move_orders"
+      - "raw_movedaily_operations"
+    join_logic: >
+      SELECT 
+        c.FirstName, c.LastName, c.EmailAddress, c.CompanyName,
+        COUNT(DISTINCT m.ID) as total_moves,
+        SUM(d.TotalAmountAfterDisc) as total_revenue,
+        AVG(d.TotalAmountAfterDisc) as avg_move_value,
+        MAX(m.MovingDate) as last_move_date,
+        AVG(m.CrewRating) as avg_satisfaction_rating
+      FROM raw_customer_master c
+      LEFT JOIN raw_move_orders m ON c.ID = m.CustomerID
+      LEFT JOIN raw_movedaily_operations d ON m.ID = d.MoveID
+      WHERE d.TotalAmountAfterDisc > 0
+      GROUP BY c.ID, c.FirstName, c.LastName, c.EmailAddress, c.CompanyName
+    business_use_case: >
+      Customer summary with complete financial and operational metrics for customer 
+      segmentation, loyalty analysis, targeted marketing campaigns, and customer 
+      lifetime value analysis.
+
+# Foreign key validation rules
+validation_rules:
+  - rule_name: "customer_move_integrity"
+    description: "Ensure all moves have valid customer references"
+    validation_sql: >
+      SELECT COUNT(*) as orphaned_moves 
+      FROM raw_move_orders m 
+      LEFT JOIN raw_customer_master c ON m.CustomerID = c.ID 
+      WHERE c.ID IS NULL AND m.CustomerID IS NOT NULL
+    expected_result: 0
+    
+  - rule_name: "move_daily_operations_integrity"
+    description: "Ensure all daily operations have valid move references"
+    validation_sql: >
+      SELECT COUNT(*) as orphaned_daily_ops
+      FROM raw_movedaily_operations d
+      LEFT JOIN raw_move_orders m ON d.MoveID = m.ID
+      WHERE m.ID IS NULL AND d.MoveID IS NOT NULL
+    expected_result: 0
+    
+  - rule_name: "relationship_coverage"
+    description: "Check relationship coverage across all tables"
+    validation_sql: >
+      SELECT 
+        (SELECT COUNT(*) FROM raw_customer_master) as customer_count,
+        (SELECT COUNT(*) FROM raw_move_orders) as move_count,
+        (SELECT COUNT(*) FROM raw_movedaily_operations) as daily_ops_count,
+        (SELECT COUNT(*) FROM raw_move_orders m 
+         INNER JOIN raw_customer_master c ON m.CustomerID = c.ID) as moves_with_customers,
+        (SELECT COUNT(*) FROM raw_movedaily_operations d 
+         INNER JOIN raw_move_orders m ON d.MoveID = m.ID) as daily_ops_with_moves
+    expected_result: "All counts should show good relationship coverage"
+
+# Query optimization hints
+optimization_hints:
+  indexes_recommended:
+    - table: "raw_customer_master"
+      columns: ["ID"]
+      type: "PRIMARY KEY"
+      
+    - table: "raw_move_orders"
+      columns: ["CustomerID"]
+      type: "FOREIGN KEY INDEX"
+      reason: "Frequent joins to customer master for customer analysis"
+      
+    - table: "raw_move_orders"
+      columns: ["ID"]
+      type: "PRIMARY KEY"
+      
+    - table: "raw_move_orders"
+      columns: ["MovingDate"]
+      type: "DATE INDEX"
+      reason: "Frequent date range queries for temporal analysis"
+      
+    - table: "raw_movedaily_operations"
+      columns: ["MoveID"]
+      type: "FOREIGN KEY INDEX"
+      reason: "Frequent joins to move orders for financial analysis"
+      
+    - table: "raw_movedaily_operations"
+      columns: ["TotalAmountAfterDisc"]
+      type: "NUMERIC INDEX"
+      reason: "Frequent revenue aggregations and filtering"
+
+# Business intelligence query templates
+bi_query_templates:
+  - template_name: "customer_lifetime_value"
+    description: "Calculate customer lifetime value with move history"
+    sql_template: >
+      WITH customer_metrics AS (
+        SELECT 
+          c.ID as customer_id,
+          c.FirstName + ' ' + c.LastName as customer_name,
+          c.CompanyName,
+          COUNT(DISTINCT m.ID) as total_moves,
+          SUM(d.TotalAmountAfterDisc) as lifetime_revenue,
+          AVG(d.TotalAmountAfterDisc) as avg_move_value,
+          MIN(m.MovingDate) as first_move_date,
+          MAX(m.MovingDate) as last_move_date,
+          AVG(m.CrewRating) as avg_satisfaction,
+          DATEDIFF(day, MIN(m.MovingDate), MAX(m.MovingDate)) as customer_lifespan_days
+        FROM raw_customer_master c
+        LEFT JOIN raw_move_orders m ON c.ID = m.CustomerID
+        LEFT JOIN raw_movedaily_operations d ON m.ID = d.MoveID
+        WHERE d.TotalAmountAfterDisc > 0
+        GROUP BY c.ID, c.FirstName, c.LastName, c.CompanyName
+      )
+      SELECT * FROM customer_metrics 
+      WHERE total_moves > 0
+      ORDER BY lifetime_revenue DESC
+      
+  - template_name: "revenue_by_customer_segment"
+    description: "Analyze revenue patterns by customer segments"
+    sql_template: >
+      SELECT 
+        CASE 
+          WHEN c.CompanyName IS NOT NULL AND c.CompanyName != '' THEN 'Commercial'
+          ELSE 'Residential' 
+        END as customer_segment,
+        COUNT(DISTINCT c.ID) as unique_customers,
+        COUNT(DISTINCT m.ID) as total_moves,
+        SUM(d.TotalAmountAfterDisc) as total_revenue,
+        AVG(d.TotalAmountAfterDisc) as avg_move_revenue,
+        AVG(m.CrewRating) as avg_satisfaction
+      FROM raw_customer_master c
+      LEFT JOIN raw_move_orders m ON c.ID = m.CustomerID
+      LEFT JOIN raw_movedaily_operations d ON m.ID = d.MoveID
+      WHERE d.TotalAmountAfterDisc > 0
+      GROUP BY 
+        CASE 
+          WHEN c.CompanyName IS NOT NULL AND c.CompanyName != '' THEN 'Commercial'
+          ELSE 'Residential' 
+        END
+      ORDER BY total_revenue DESC
+      
+  - template_name: "operational_efficiency_by_move_size"
+    description: "Analyze operational efficiency metrics by move size"
+    sql_template: >
+      SELECT 
+        m.MoveSize,
+        COUNT(*) as move_count,
+        AVG(d.TotalAmountAfterDisc) as avg_revenue,
+        AVG(d.LaborCost) as avg_labor_cost,
+        AVG(d.TravelCost) as avg_travel_cost,
+        AVG(d.EstTime) as avg_estimated_hours,
+        AVG(m.CrewRating) as avg_crew_rating,
+        AVG(d.TotalAmountAfterDisc / NULLIF(d.EstTime, 0)) as revenue_per_hour
+      FROM raw_move_orders m
+      INNER JOIN raw_movedaily_operations d ON m.ID = d.MoveID
+      WHERE d.TotalAmountAfterDisc > 0 AND d.EstTime > 0
+      GROUP BY m.MoveSize
+      ORDER BY m.MoveSize
+
+# Relationship hierarchy definitions  
+relationship_hierarchies:
+  customer_centric:
+    - name: "Customer_Analytics_Chain"
+      description: "Customer-focused analysis relationships"
+      primary_table: "raw_customer_master"
+      related_tables:
+        - table: "raw_move_orders"
+          relationship: "customer_to_moves"
+          analysis_focus: "Service history and patterns"
+        - table: "raw_movedaily_operations"  
+          relationship: "customer_to_daily_operations"
+          analysis_focus: "Financial performance and operational metrics"
+          
+  operational_centric:
+    - name: "Operations_Analytics_Chain"
+      description: "Operations-focused analysis relationships"
+      primary_table: "raw_move_orders"
+      related_tables:
+        - table: "raw_customer_master"
+          relationship: "customer_to_moves"
+          analysis_focus: "Customer context and segmentation"
+        - table: "raw_movedaily_operations"
+          relationship: "moves_to_daily_operations"
+          analysis_focus: "Detailed operational and financial metrics"

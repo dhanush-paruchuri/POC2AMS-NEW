@@ -1,0 +1,459 @@
+# config/dataset_configs/raw_movedaily.yaml
+dataset_info:
+  table_name: "raw_movedaily_operations"
+  original_file_name: "MoveDaily.csv"
+  athena_table_name: "raw_movedaily_ops_data"
+  zone: "Raw"
+  format: "CSV"
+  
+  # Human-supplied rich metadata
+  description: >
+    Comprehensive daily move operations data containing detailed pricing breakdowns, 
+    service plan configurations, cost calculations, documentation tracking, and 
+    operational workflow information. This dataset captures the complete financial 
+    and operational picture of individual moves including labor costs, travel expenses, 
+    packing services, insurance options, customer signatures, and regulatory documentation. 
+    Essential for pricing analysis, profitability tracking, and operational optimization.
+    
+  business_purpose: >
+    Core dataset for financial analysis, pricing optimization, profitability assessment, 
+    and operational efficiency measurement. Used for understanding cost structures, 
+    service plan performance, pricing strategy effectiveness, and operational workflow 
+    optimization. Critical for revenue management, commission calculations, profit 
+    analysis, and service delivery tracking across different move types and service options.
+    
+  tags:
+    - "Move Operations"
+    - "Pricing Data"
+    - "Financial Operations"
+    - "Service Plans"
+    - "Cost Analysis"
+    - "Documentation Tracking"
+    - "Daily Operations"
+    - "Revenue Management"
+    
+  data_owner: "Operations & Finance Team"
+  source_system: "Daily Operations & Billing System"
+
+# Column-level metadata (CRITICAL for rich semantic search)
+columns:
+  ID:
+    description: "Primary unique identifier for each daily move operation record"
+    semantic_type: "identifier"
+    business_name: "Daily Move Operation ID"
+    data_classification: "Internal"
+    is_primary_key: true
+    sample_values: [1, 2, 3]
+    
+  MoveID:
+    description: "Reference to the parent move order that this daily operation belongs to"
+    semantic_type: "foreign_key"
+    business_name: "Move Order Reference"
+    data_classification: "Internal"
+    is_foreign_key_to_table: "raw_move_orders"
+    is_foreign_key_to_column: "ID"
+    sample_values: [1001, 1002, 1003]
+    
+  BillOfLadingID:
+    description: "Reference to the bill of lading document for this move operation"
+    semantic_type: "foreign_key"
+    business_name: "Bill of Lading Reference"
+    data_classification: "Internal"
+    sample_values: [5001, 5002, 5003]
+    
+  Date:
+    description: "Date when this daily move operation was performed or recorded"
+    semantic_type: "business_date"
+    business_name: "Operation Date"
+    data_classification: "Internal"
+    sample_values: ["2024-03-15", "2024-03-16", "2024-03-17"]
+    
+  SlotName:
+    description: "Name or identifier of the time slot assigned for this move operation"
+    semantic_type: "scheduling_attribute"
+    business_name: "Time Slot"
+    data_classification: "Internal"
+    sample_values: ["Morning", "Afternoon", "AM-Slot-1"]
+    
+  LoadingInfoID:
+    description: "Reference to detailed loading information and logistics data"
+    semantic_type: "foreign_key"
+    business_name: "Loading Info Reference"
+    data_classification: "Internal"
+    sample_values: [3001, 3002, 3003]
+    
+  UnloadingInfoID:
+    description: "Reference to detailed unloading information and logistics data"
+    semantic_type: "foreign_key"
+    business_name: "Unloading Info Reference"
+    data_classification: "Internal"
+    sample_values: [4001, 4002, 4003]
+    
+  TravelInfoID:
+    description: "Reference to travel and transportation details for this move"
+    semantic_type: "foreign_key"
+    business_name: "Travel Info Reference"
+    data_classification: "Internal"
+    sample_values: [2001, 2002, 2003]
+    
+  TravelRateSource:
+    description: "Source or method used to calculate travel rates for this move"
+    semantic_type: "rate_source"
+    business_name: "Travel Rate Source"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3]
+    
+  TotalCharges:
+    description: "Total charges billed to the customer for this move operation"
+    semantic_type: "financial_amount"
+    business_name: "Total Customer Charges"
+    data_classification: "Financial"
+    sample_values: [1250.00, 2100.50, 875.25]
+    
+  Notes:
+    description: "Free-form notes and comments about this specific move operation"
+    semantic_type: "notes"
+    business_name: "Operation Notes"
+    data_classification: "Internal"
+    sample_values: ["Weather delay", "Customer requested extra packing", "Completed on schedule"]
+    
+  DispatchStatusID:
+    description: "Current dispatch status code for this move operation"
+    semantic_type: "status_code"
+    business_name: "Dispatch Status"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3, 4]
+    
+  DateUpdated:
+    description: "Timestamp when this move operation record was last updated"
+    semantic_type: "audit_timestamp"
+    business_name: "Last Updated Date"
+    data_classification: "Internal"
+    sample_values: ["2024-03-15", "2024-03-16"]
+    
+  DateCreated:
+    description: "Timestamp when this move operation record was first created"
+    semantic_type: "audit_timestamp"
+    business_name: "Record Created Date"
+    data_classification: "Internal"
+    sample_values: ["2024-03-10", "2024-03-11"]
+    
+  PreFlag:
+    description: "Flag indicating if this is a pre-move operation or assessment"
+    semantic_type: "operational_flag"
+    business_name: "Pre-Move Flag"
+    data_classification: "Internal"
+    sample_values: [1, 0]
+    
+  Estimatetype:
+    description: "Type of estimate provided for this move (in-home, virtual, phone, etc.)"
+    semantic_type: "service_type"
+    business_name: "Estimate Type"
+    data_classification: "Internal"
+    sample_values: ["InHome", "Virtual", "Phone"]
+    
+  EstCost:
+    description: "Estimated cost provided to customer during the estimate phase"
+    semantic_type: "financial_amount"
+    business_name: "Estimated Cost"
+    data_classification: "Financial"
+    sample_values: [1200.00, 1800.00, 950.00]
+    
+  PlanType:
+    description: "Type of service plan selected by customer (Standard, Protection, Green, Custom)"
+    semantic_type: "service_plan"
+    business_name: "Service Plan Type"
+    data_classification: "Internal"
+    sample_values: ["Standard", "Protection", "Green", "Custom"]
+    
+  TotalComments:
+    description: "Aggregated comments from all phases of the move operation"
+    semantic_type: "notes"
+    business_name: "All Operation Comments"
+    data_classification: "Internal"
+    sample_values: ["Customer satisfied with service", "Minor delay due to traffic"]
+    
+  EstimateQuotePath:
+    description: "File path or URL to the estimate quote document"
+    semantic_type: "document_path"
+    business_name: "Estimate Quote Document"
+    data_classification: "Internal"
+    sample_values: ["/docs/estimates/EST001.pdf", "/docs/estimates/EST002.pdf"]
+    
+  cubedata:
+    description: "Cubic footage data and calculations for the move"
+    semantic_type: "measurement_data"
+    business_name: "Cubic Footage Data"
+    data_classification: "Internal"
+    sample_values: ["1200 cu ft", "850 cu ft", "2100 cu ft"]
+    
+  HtmlPath:
+    description: "File path to HTML version of move documentation"
+    semantic_type: "document_path"
+    business_name: "HTML Documentation Path"
+    data_classification: "Internal"
+    sample_values: ["/docs/html/move001.html", "/docs/html/move002.html"]
+    
+  PDFPath:
+    description: "File path to PDF version of move documentation"
+    semantic_type: "document_path"
+    business_name: "PDF Documentation Path"
+    data_classification: "Internal"
+    sample_values: ["/docs/pdf/move001.pdf", "/docs/pdf/move002.pdf"]
+    
+  CustomerSig:
+    description: "Customer signature capture for move authorization and approval"
+    semantic_type: "signature_data"
+    business_name: "Customer Signature"
+    data_classification: "PII"
+    sample_values: ["[signature_data]", "[signature_captured]"]
+    
+  EstimatorSig:
+    description: "Estimator signature for estimate approval and verification"
+    semantic_type: "signature_data"
+    business_name: "Estimator Signature"
+    data_classification: "Internal"
+    sample_values: ["[estimator_sig]", "[verified_signature]"]
+    
+  ReasonForAddCharges:
+    description: "Explanation for any additional charges beyond the original estimate"
+    semantic_type: "notes"
+    business_name: "Additional Charges Reason"
+    data_classification: "Internal"
+    sample_values: ["Extra packing materials", "Stair carry", "Long carry distance"]
+    
+  # Service Plan Cost Breakdown
+  StandardPlanCost:
+    description: "Total cost for standard service plan option"
+    semantic_type: "financial_amount"
+    business_name: "Standard Plan Cost"
+    data_classification: "Financial"
+    sample_values: ["1200.00", "1450.00", "980.00"]
+    
+  ProtectionPlanCost:
+    description: "Total cost for protection service plan option"
+    semantic_type: "financial_amount"
+    business_name: "Protection Plan Cost"
+    data_classification: "Financial"
+    sample_values: ["1400.00", "1650.00", "1180.00"]
+    
+  GreenPlanCost:
+    description: "Total cost for eco-friendly green service plan option"
+    semantic_type: "financial_amount"
+    business_name: "Green Plan Cost"
+    data_classification: "Financial"
+    sample_values: ["1350.00", "1600.00", "1130.00"]
+    
+  CustomPlanCost:
+    description: "Total cost for custom tailored service plan"
+    semantic_type: "financial_amount"
+    business_name: "Custom Plan Cost"
+    data_classification: "Financial"
+    sample_values: ["1500.00", "1800.00", "1250.00"]
+    
+  # Cost Component Breakdown
+  LaborCost:
+    description: "Labor costs for crew services during the move"
+    semantic_type: "financial_amount"
+    business_name: "Labor Cost"
+    data_classification: "Financial"
+    sample_values: ["480.00", "720.00", "600.00"]
+    
+  TravelCost:
+    description: "Transportation and travel costs for the move"
+    semantic_type: "financial_amount"
+    business_name: "Travel Cost"
+    data_classification: "Financial"
+    sample_values: ["120.00", "180.00", "95.00"]
+    
+  FuelCost:
+    description: "Fuel costs associated with the move operation"
+    semantic_type: "financial_amount"
+    business_name: "Fuel Cost"
+    data_classification: "Financial"
+    sample_values: ["45.00", "67.50", "52.00"]
+    
+  PackingCost:
+    description: "Costs for packing materials and packing services"
+    semantic_type: "financial_amount"
+    business_name: "Packing Cost"
+    data_classification: "Financial"
+    sample_values: ["150.00", "225.00", "89.00"]
+    
+  # Revenue and Profitability Metrics
+  TotalAmount:
+    description: "Total amount charged to customer before any discounts"
+    semantic_type: "financial_amount"
+    business_name: "Total Amount (Before Discount)"
+    data_classification: "Financial"
+    sample_values: ["1250.00", "1875.00", "1100.00"]
+    
+  TotalAmountAfterDisc:
+    description: "Final total amount after applying any discounts"
+    semantic_type: "financial_amount"
+    business_name: "Total Amount (After Discount)"
+    data_classification: "Financial"
+    sample_values: ["1125.00", "1687.50", "990.00"]
+    
+  Discount:
+    description: "Discount percentage or code applied to this move"
+    semantic_type: "discount_info"
+    business_name: "Discount Applied"
+    data_classification: "Internal"
+    sample_values: ["10%", "SENIOR15", "MILITARY5"]
+    
+  DiscountAmt:
+    description: "Dollar amount of discount applied to the total"
+    semantic_type: "financial_amount"
+    business_name: "Discount Amount"
+    data_classification: "Financial"
+    sample_values: ["125.00", "187.50", "110.00"]
+    
+  # Commission and Profit Calculations
+  OSMcommissionWithDisc:
+    description: "Operations Sales Manager commission calculated with discount applied"
+    semantic_type: "financial_amount"
+    business_name: "OSM Commission (With Discount)"
+    data_classification: "Financial"
+    sample_values: ["56.25", "84.38", "49.50"]
+    
+  OSMcommissionWithoutDisc:
+    description: "Operations Sales Manager commission calculated without discount"
+    semantic_type: "financial_amount"
+    business_name: "OSM Commission (Without Discount)"
+    data_classification: "Financial"
+    sample_values: ["62.50", "93.75", "55.00"]
+    
+  AMSprofithourWithDisc:
+    description: "AMS profit per hour calculation with discount applied"
+    semantic_type: "financial_rate"
+    business_name: "AMS Profit/Hour (With Discount)"
+    data_classification: "Financial"
+    sample_values: ["45.00", "52.50", "38.75"]
+    
+  AMSprofithourWithoutDisc:
+    description: "AMS profit per hour calculation without discount"
+    semantic_type: "financial_rate"
+    business_name: "AMS Profit/Hour (Without Discount)"
+    data_classification: "Financial"
+    sample_values: ["50.00", "58.33", "43.06"]
+
+# Logical column groupings for better understanding
+column_groups:
+  identifiers:
+    - "ID"
+    - "MoveID"
+    - "BillOfLadingID"
+  scheduling:
+    - "Date"
+    - "SlotName"
+    - "DispatchStatusID"
+  logistics_references:
+    - "LoadingInfoID"
+    - "UnloadingInfoID"
+    - "TravelInfoID"
+    - "TravelRateSource"
+  pricing_totals:
+    - "TotalCharges"
+    - "TotalAmount"
+    - "TotalAmountAfterDisc"
+    - "EstCost"
+  service_plans:
+    - "PlanType"
+    - "StandardPlanCost"
+    - "ProtectionPlanCost"
+    - "GreenPlanCost"
+    - "CustomPlanCost"
+  cost_breakdown:
+    - "LaborCost"
+    - "TravelCost"
+    - "FuelCost"
+    - "PackingCost"
+    - "DirectServiceOptionCost"
+    - "ThirrdPartyServiceCost"
+  discounts:
+    - "Discount"
+    - "DiscountAmt"
+    - "ShowDiscount"
+    - "ShowDiscountVal"
+  commissions_profit:
+    - "OSMcommissionWithDisc"
+    - "OSMcommissionWithoutDisc"
+    - "AMSprofithourWithDisc"
+    - "AMSprofithourWithoutDisc"
+  documentation:
+    - "EstimateQuotePath"
+    - "HtmlPath"
+    - "PDFPath"
+    - "CubeSheetURL"
+    - "WaiverPDFPath"
+  signatures:
+    - "CustomerSig"
+    - "EstimatorSig"
+    - "OFSCustomerSign"
+  system_fields:
+    - "DateCreated"
+    - "DateUpdated"
+
+# Business questions this dataset can answer
+answerable_questions:
+  - question: "What is our average profit margin by service plan type?"
+    sql_hint: "SELECT PlanType, AVG((TotalAmountAfterDisc - TotalCostOnly) / TotalAmountAfterDisc * 100) as profit_margin FROM raw_movedaily_operations GROUP BY PlanType"
+    category: "Profitability Analysis"
+    
+  - question: "How much revenue did we generate from moves this month?"
+    sql_hint: "SELECT SUM(TotalAmountAfterDisc) as monthly_revenue FROM raw_movedaily_operations WHERE Date >= DATE_TRUNC('month', CURRENT_DATE)"
+    category: "Revenue Analysis"
+    
+  - question: "What's the impact of discounts on our total revenue?"
+    sql_hint: "SELECT SUM(TotalAmount) as gross_revenue, SUM(TotalAmountAfterDisc) as net_revenue, SUM(DiscountAmt) as total_discounts FROM raw_movedaily_operations"
+    category: "Discount Analysis"
+    
+  - question: "Which service plans are most profitable?"
+    sql_hint: "SELECT PlanType, AVG(AMSprofithourWithDisc) as avg_profit_per_hour, COUNT(*) as move_count FROM raw_movedaily_operations GROUP BY PlanType ORDER BY avg_profit_per_hour DESC"
+    category: "Service Plan Analysis"
+    
+  - question: "What are our average labor costs by move type?"
+    sql_hint: "SELECT PlanType, AVG(LaborCost) as avg_labor_cost, AVG(LaborCost / TotalAmountAfterDisc * 100) as labor_cost_percentage FROM raw_movedaily_operations GROUP BY PlanType"
+    category: "Cost Analysis"
+    
+  - question: "How often do we apply discounts and what's the average discount amount?"
+    sql_hint: "SELECT COUNT(*) as total_moves, SUM(CASE WHEN DiscountAmt > 0 THEN 1 ELSE 0 END) as discounted_moves, AVG(CASE WHEN DiscountAmt > 0 THEN DiscountAmt END) as avg_discount FROM raw_movedaily_operations"
+    category: "Discount Performance"
+    
+  - question: "What's our commission expense by operations manager?"
+    sql_hint: "SELECT DATE_TRUNC('month', Date) as month, SUM(OSMcommissionWithDisc) as total_osm_commission FROM raw_movedaily_operations GROUP BY month ORDER BY month"
+    category: "Commission Analysis"
+    
+  - question: "Which moves had additional charges and why?"
+    sql_hint: "SELECT Date, MoveID, ReasonForAddCharges, TotalAmount - EstCost as additional_amount FROM raw_movedaily_operations WHERE ReasonForAddCharges IS NOT NULL AND TotalAmount > EstCost"
+    category: "Additional Charges Analysis"
+
+# LLM hints for SQL generation
+llm_hints:
+  preferred_aggregations: 
+    - "SUM(TotalAmountAfterDisc) as total_revenue"
+    - "AVG(AMSprofithourWithDisc) as avg_profit_per_hour"
+    - "SUM(DiscountAmt) as total_discounts"
+    - "COUNT(*) as move_count"
+    - "GROUP BY PlanType"
+    - "GROUP BY Date"
+  common_filters: 
+    - "WHERE Date >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)"
+    - "WHERE TotalAmountAfterDisc > 0"
+    - "WHERE PlanType IS NOT NULL"
+    - "WHERE DiscountAmt IS NOT NULL"
+  join_patterns:
+    - "JOIN raw_move_orders ON MoveID = raw_move_orders.ID"
+    - "Can join to customer data through move orders relationship"
+    - "Can analyze by customer through MoveID -> CustomerID chain"
+  data_quirks: 
+    - "Financial amounts are in USD"
+    - "PlanType values: Standard, Protection, Green, Custom"
+    - "Discount can be percentage (10%) or code (SENIOR15)"
+    - "Profit calculations include both with and without discount versions"
+    - "Commission calculations are per-hour based"
+    - "Some string fields contain formatted currency values"
+    - "Document paths are relative file system paths"
+    - "Signature fields contain encoded signature data"
+    - "Date fields are in YYYY-MM-DD format"

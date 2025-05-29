@@ -1,0 +1,266 @@
+dataset_info:
+  table_name: "raw_customer_master"
+  original_file_name: "Customer.csv"
+  athena_table_name: "raw_customer_data"
+  zone: "Raw"
+  format: "CSV"
+  
+  # Human-supplied rich metadata
+  description: >
+    Comprehensive customer master data extracted from the primary CRM system containing 
+    customer identities, contact preferences, lead management information, and engagement 
+    tracking. This dataset serves as the foundation for customer relationship management, 
+    lead nurturing, and communication workflows. Contains both personal identifiable 
+    information and behavioral tracking data for marketing and sales operations.
+    
+  business_purpose: >
+    Primary source for customer analytics, lead conversion tracking, communication 
+    preference management, and sales pipeline analysis. Used to understand customer 
+    acquisition channels, optimize contact strategies, and track customer lifecycle 
+    from initial lead through conversion. Critical for marketing attribution, 
+    sales performance analysis, and customer segmentation initiatives.
+    
+  tags:
+    - "Customer Master Data"
+    - "Lead Management"
+    - "Contact Information"
+    - "Marketing Data"
+    - "Sales Pipeline"
+    - "PII Present"
+    - "CRM Source"
+    - "Communication Tracking"
+    
+  data_owner: "Customer Operations & Marketing Team"
+  source_system: "Primary CRM & Lead Management System"
+
+# Column-level metadata (CRITICAL for rich semantic search)
+columns:
+  ID:
+    description: "Primary unique identifier for each customer record in the system"
+    semantic_type: "identifier"
+    business_name: "Customer Record ID"
+    data_classification: "Internal"
+    is_primary_key: true
+    sample_values: [1, 2, 3]
+    
+  EmployeeID:
+    description: "Identifier of the employee/agent assigned to manage this customer"
+    semantic_type: "foreign_key"
+    business_name: "Assigned Employee"
+    data_classification: "Internal"
+    is_foreign_key_to_table: "employee_master"
+    is_foreign_key_to_column: "ID"
+    sample_values: [101, 102, 103]
+    
+  FirstName:
+    description: "Customer's first name as provided during initial contact or registration"
+    semantic_type: "personal_attribute"
+    business_name: "First Name"
+    data_classification: "PII"
+    sample_values: ["John", "Sarah", "Michael"]
+    
+  LastName:
+    description: "Customer's last name as provided during initial contact or registration"
+    semantic_type: "personal_attribute"
+    business_name: "Last Name"
+    data_classification: "PII"
+    sample_values: ["Smith", "Johnson", "Williams"]
+    
+  Status:
+    description: "Current status of the customer in the sales/service pipeline (active, inactive, prospect, etc.)"
+    semantic_type: "status_code"
+    business_name: "Customer Status"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3]
+    
+  EmailAddress:
+    description: "Primary email address for customer communication and marketing outreach"
+    semantic_type: "contact_information"
+    business_name: "Email Address"
+    data_classification: "PII"
+    sample_values: ["john.smith@email.com", "sarah.j@example.com"]
+    
+  BestTimeToCall:
+    description: "Customer's preferred time window for phone contact (morning, afternoon, evening)"
+    semantic_type: "preference"
+    business_name: "Preferred Call Time"
+    data_classification: "Internal"
+    sample_values: ["Morning", "Afternoon", "Evening"]
+    
+  PreferredContactMethod:
+    description: "Customer's stated preference for communication method (phone, email, text)"
+    semantic_type: "preference"
+    business_name: "Contact Method Preference"
+    data_classification: "Internal"
+    sample_values: ["Phone", "Email", "Text"]
+    
+  CompanyName:
+    description: "Name of the company or business associated with this customer (for commercial accounts)"
+    semantic_type: "business_attribute"
+    business_name: "Company Name"
+    data_classification: "Internal"
+    sample_values: ["ABC Corp", "XYZ Industries"]
+    
+  Source:
+    description: "Marketing channel or lead source where this customer originated (web, referral, advertising)"
+    semantic_type: "acquisition_channel"
+    business_name: "Lead Source"
+    data_classification: "Internal"
+    sample_values: ["Website", "Referral", "Google Ads"]
+    
+  Inbound:
+    description: "Flag indicating if this was an inbound lead (customer contacted us) vs outbound (we contacted them)"
+    semantic_type: "acquisition_flag"
+    business_name: "Inbound Lead Flag"
+    data_classification: "Internal"
+    sample_values: [1, 0]
+    
+  NextCallDateTime:
+    description: "Scheduled date and time for the next follow-up call or contact attempt"
+    semantic_type: "timestamp"
+    business_name: "Next Call Date"
+    data_classification: "Internal"
+    sample_values: ["2024-01-15 10:00:00", "2024-01-16 14:30:00"]
+    
+  Comments:
+    description: "Free-form notes and comments about customer interactions, preferences, or special requirements"
+    semantic_type: "notes"
+    business_name: "Customer Notes"
+    data_classification: "Internal"
+    sample_values: ["Interested in summer move", "Needs weekend service"]
+    
+  VIP:
+    description: "Flag indicating if customer is designated as VIP for special handling or priority service"
+    semantic_type: "status_flag"
+    business_name: "VIP Status"
+    data_classification: "Internal"
+    sample_values: [1, 0]
+    
+  DateUpdated:
+    description: "Timestamp of the last modification to this customer record"
+    semantic_type: "audit_timestamp"
+    business_name: "Last Updated Date"
+    data_classification: "Internal"
+    sample_values: ["2024-01-10", "2024-01-11"]
+    
+  DateCreated:
+    description: "Timestamp when this customer record was first created in the system"
+    semantic_type: "audit_timestamp"
+    business_name: "Record Created Date"
+    data_classification: "Internal"
+    sample_values: ["2024-01-01", "2024-01-02"]
+    
+  Salutation:
+    description: "Formal greeting prefix for customer communication (Mr., Mrs., Dr., etc.)"
+    semantic_type: "personal_attribute"
+    business_name: "Title/Salutation"
+    data_classification: "Internal"
+    sample_values: ["Mr.", "Mrs.", "Dr."]
+    
+  EmailOptIn:
+    description: "Customer's consent status for receiving marketing emails and newsletters"
+    semantic_type: "consent_flag"
+    business_name: "Email Marketing Consent"
+    data_classification: "Internal"
+    sample_values: ["Yes", "No", "Pending"]
+    
+  UspsMailOptIn:
+    description: "Customer's consent for receiving physical mail and postal marketing materials"
+    semantic_type: "consent_flag"
+    business_name: "Mail Marketing Consent"
+    data_classification: "Internal"
+    sample_values: ["Yes", "No"]
+    
+  VIP:
+    description: "Indicates whether customer has VIP status for priority handling"
+    semantic_type: "status_flag"
+    business_name: "VIP Customer"
+    data_classification: "Internal"
+    
+  SecureToken:
+    description: "Security token or authentication key for customer account access"
+    semantic_type: "security_token"
+    business_name: "Security Token"
+    data_classification: "Confidential"
+    
+  uuid:
+    description: "Universal unique identifier for cross-system customer record matching"
+    semantic_type: "identifier"
+    business_name: "Universal ID"
+    data_classification: "Internal"
+
+# Logical column groupings for better understanding
+column_groups:
+  identity:
+    - "ID"
+    - "uuid"
+    - "CustomerID"
+  personal_info:
+    - "FirstName"
+    - "LastName"
+    - "Salutation"
+    - "CompanyName"
+  contact_info:
+    - "EmailAddress"
+    - "BestTimeToCall"
+    - "PreferredContactMethod"
+  marketing_tracking:
+    - "Source"
+    - "Inbound"
+    - "EmailOptIn"
+    - "UspsMailOptIn"
+    - "AdOptIn"
+  system_fields:
+    - "DateCreated"
+    - "DateUpdated"
+    - "Status"
+  engagement:
+    - "NextCallDateTime"
+    - "Comments"
+    - "VIP"
+
+# Business questions this dataset can answer
+answerable_questions:
+  - question: "How many total customers do we have in our system?"
+    sql_hint: "SELECT COUNT(*) FROM raw_customer_master"
+    category: "Basic Metrics"
+    
+  - question: "What are our top customer acquisition sources?"
+    sql_hint: "SELECT Source, COUNT(*) as customer_count FROM raw_customer_master GROUP BY Source ORDER BY customer_count DESC"
+    category: "Marketing Analysis"
+    
+  - question: "How many customers have opted in to email marketing?"
+    sql_hint: "SELECT COUNT(*) FROM raw_customer_master WHERE EmailOptIn = 'Yes'"
+    category: "Marketing Metrics"
+    
+  - question: "What percentage of our leads are inbound vs outbound?"
+    sql_hint: "SELECT Inbound, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM raw_customer_master) as percentage FROM raw_customer_master GROUP BY Inbound"
+    category: "Lead Analysis"
+    
+  - question: "Who are our VIP customers and their contact preferences?"
+    sql_hint: "SELECT FirstName, LastName, PreferredContactMethod FROM raw_customer_master WHERE VIP = 1"
+    category: "Customer Service"
+    
+  - question: "How many customers prefer each contact method?"
+    sql_hint: "SELECT PreferredContactMethod, COUNT(*) FROM raw_customer_master GROUP BY PreferredContactMethod"
+    category: "Communication Analysis"
+
+# LLM hints for SQL generation
+llm_hints:
+  preferred_aggregations: 
+    - "COUNT(*)"
+    - "COUNT(DISTINCT ID)"
+    - "GROUP BY Source"
+    - "GROUP BY Status"
+  common_filters: 
+    - "WHERE Status IS NOT NULL"
+    - "WHERE EmailAddress IS NOT NULL"
+    - "WHERE VIP = 1"
+  join_patterns:
+    - "Can join to Move data using ID = CustomerID"
+    - "Can join to Employee data using EmployeeID"
+  data_quirks: 
+    - "Status codes: 1=Active, 2=Inactive, 3=Prospect"
+    - "VIP field: 1=Yes, 0=No"
+    - "Inbound field: 1=Inbound lead, 0=Outbound lead"
+    - "Some EmployeeID values may be null for unassigned customers"

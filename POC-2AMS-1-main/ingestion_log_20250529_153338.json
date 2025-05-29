@@ -1,0 +1,199 @@
+{
+  "start_time": "2025-05-29T15:33:25.047267",
+  "extraction_results": [
+    {
+      "yaml_file": "raw_movedaily.yaml",
+      "csv_file": "MoveDaily.csv",
+      "table_name": "raw_movedaily_operations",
+      "success": true,
+      "error": null,
+      "record_count": 50,
+      "column_count": 109,
+      "processing_time": "2025-05-29T20:33:25.523234+00:00"
+    },
+    {
+      "yaml_file": "raw_move.yaml",
+      "csv_file": "Move.csv",
+      "table_name": "raw_move_orders",
+      "success": true,
+      "error": null,
+      "record_count": 50,
+      "column_count": 73,
+      "processing_time": "2025-05-29T20:33:25.537915+00:00"
+    },
+    {
+      "yaml_file": "raw_customer.yaml",
+      "csv_file": "Customer.csv",
+      "table_name": "raw_customer_master",
+      "success": true,
+      "error": null,
+      "record_count": 50,
+      "column_count": 54,
+      "processing_time": "2025-05-29T20:33:25.548813+00:00"
+    }
+  ],
+  "upload_results": {
+    "datasets": {
+      "successful": 3,
+      "failed": 0,
+      "total_attempted": 3,
+      "successful_uploads": [
+        {
+          "table_name": "raw_movedaily_operations",
+          "uuid": "a6fc0bba-1a00-4508-8e9d-06dc200bb8d5",
+          "record_count": 50,
+          "attempt": 1
+        },
+        {
+          "table_name": "raw_move_orders",
+          "uuid": "585a4e19-cfec-4d45-ae78-4615890141d6",
+          "record_count": 50,
+          "attempt": 1
+        },
+        {
+          "table_name": "raw_customer_master",
+          "uuid": "96120403-3bf8-43d1-a219-8ac1ce307ebe",
+          "record_count": 50,
+          "attempt": 1
+        }
+      ],
+      "failed_uploads": []
+    },
+    "relationships": {
+      "stats": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "start_time": "2025-05-29 20:33:31.331806+00:00",
+        "end_time": "2025-05-29 20:33:33.365385+00:00",
+        "error_details": []
+      },
+      "results": [
+        {
+          "identifier": "raw_move_orders.ID->raw_customer_master.ID",
+          "uuid": "850ece1c-a054-5827-b875-7c4d733315ee",
+          "status": "SUCCESS",
+          "index": 0
+        },
+        {
+          "identifier": "raw_movedaily_operations.ID->raw_move_orders.ID",
+          "uuid": "0154bcf8-efca-559a-8a3d-79adeaf118eb",
+          "status": "SUCCESS",
+          "index": 1
+        },
+        {
+          "identifier": "raw_movedaily_operations.ID->raw_customer_master.ID",
+          "uuid": "4a0307d6-2172-5b74-9bf6-836b8bc3db76",
+          "status": "SUCCESS",
+          "index": 2
+        }
+      ]
+    },
+    "domain_tags": {
+      "stats": {
+        "total": 8,
+        "successful": 0,
+        "failed": 8,
+        "start_time": "2025-05-29 20:33:33.372193+00:00",
+        "end_time": "2025-05-29 20:33:33.372595+00:00",
+        "error_details": [
+          "Object 0: Missing required field: tag_description",
+          "Object 1: Missing required field: tag_description",
+          "Object 2: Missing required field: tag_description",
+          "Object 3: Missing required field: tag_description",
+          "Object 4: Missing required field: tag_description",
+          "Object 5: Missing required field: tag_description",
+          "Object 6: Missing required field: tag_description",
+          "Object 7: Missing required field: tag_description"
+        ]
+      },
+      "results": [
+        {
+          "identifier": "Customer_Management",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 0
+        },
+        {
+          "identifier": "Operations",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 1
+        },
+        {
+          "identifier": "Marketing",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 2
+        },
+        {
+          "identifier": "Sales",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 3
+        },
+        {
+          "identifier": "Customer_Service",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 4
+        },
+        {
+          "identifier": "Logistics",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 5
+        },
+        {
+          "identifier": "Financial",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 6
+        },
+        {
+          "identifier": "Daily_Operations",
+          "uuid": "none",
+          "status": "VALIDATION_ERROR",
+          "errors": [
+            "Missing required field: tag_description"
+          ],
+          "warnings": [],
+          "index": 7
+        }
+      ]
+    }
+  },
+  "total_datasets": 3,
+  "successful_datasets": 3,
+  "failed_datasets": 0,
+  "end_time": "2025-05-29T15:33:38.087256",
+  "overall_success": true
+}

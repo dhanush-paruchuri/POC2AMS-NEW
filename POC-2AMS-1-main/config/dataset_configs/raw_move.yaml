@@ -1,0 +1,297 @@
+dataset_info:
+  table_name: "raw_move_orders"
+  original_file_name: "Move.csv"
+  athena_table_name: "raw_move_data"
+  zone: "Raw"
+  format: "CSV"
+  
+  # Human-supplied rich metadata
+  description: >
+    Comprehensive moving service orders database containing detailed information about 
+    each move request including origin/destination addresses, pricing, 
+    logistics, crew assignments, and service delivery tracking. This dataset captures 
+    the complete lifecycle of moving services from initial booking through completion, 
+    including estimator visits, scheduling, workflow management, and post-move activities.
+    
+  business_purpose: >
+    Core operational dataset for move management, resource planning, crew scheduling, 
+    and service delivery tracking. Used for operational efficiency analysis, customer 
+    satisfaction measurement, pricing optimization, and revenue management. Critical 
+    for understanding move complexity, capacity planning, route optimization, and 
+    service quality metrics. Enables analysis of move patterns, seasonal trends, 
+    and operational performance indicators.
+    
+  tags:
+    - "Move Orders"
+    - "Service Operations"
+    - "Logistics Data"
+    - "Customer Moves"
+    - "Scheduling"
+    - "Pricing Information"
+    - "Operational Data"
+    - "Workflow Management"
+    
+  data_owner: "Operations & Logistics Team"
+  source_system: "Move Management & Logistics System"
+
+# Column-level metadata (CRITICAL for rich semantic search)
+columns:
+  ID:
+    description: "Primary unique identifier for each move order in the system"
+    semantic_type: "identifier"
+    business_name: "Move Order ID"
+    data_classification: "Internal"
+    is_primary_key: true
+    sample_values: [1001, 1002, 1003]
+    
+  CustomerID:
+    description: "Reference to the customer who requested this move, links to Customer master data"
+    semantic_type: "foreign_key"
+    business_name: "Customer Reference"
+    data_classification: "Internal"
+    is_foreign_key_to_table: "raw_customer_master"
+    is_foreign_key_to_column: "ID"
+    sample_values: [501, 502, 503]
+    
+  BranchID:
+    description: "Identifier of the local branch or office responsible for executing this move"
+    semantic_type: "foreign_key"
+    business_name: "Service Branch"
+    data_classification: "Internal"
+    is_foreign_key_to_table: "branch_master"
+    is_foreign_key_to_column: "ID"
+    sample_values: [10, 11, 12]
+    
+  FromAddressInfoID:
+    description: "Reference to detailed address information for the move origin location"
+    semantic_type: "foreign_key"
+    business_name: "Origin Address"
+    data_classification: "Internal"
+    is_foreign_key_to_table: "address_info"
+    is_foreign_key_to_column: "ID"
+    sample_values: [2001, 2002, 2003]
+    
+  ToAddressInfoID:
+    description: "Reference to detailed address information for the move destination location"
+    semantic_type: "foreign_key"
+    business_name: "Destination Address"
+    data_classification: "Internal"
+    is_foreign_key_to_table: "address_info"
+    is_foreign_key_to_column: "ID"
+    sample_values: [3001, 3002, 3003]
+    
+  MovePricingID:
+    description: "Reference to detailed pricing and cost breakdown for this move service"
+    semantic_type: "foreign_key"
+    business_name: "Pricing Details"
+    data_classification: "Internal"
+    is_foreign_key_to_table: "move_pricing"
+    is_foreign_key_to_column: "ID"
+    sample_values: [4001, 4002, 4003]
+    
+  Status:
+    description: "Current status of the move order in the workflow (booked, scheduled, in-progress, completed, cancelled)"
+    semantic_type: "status_code"
+    business_name: "Move Status"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3, 4, 5]
+    
+  MovingDate:
+    description: "Scheduled or actual date when the move service is to be performed"
+    semantic_type: "business_date"
+    business_name: "Move Date"
+    data_classification: "Internal"
+    sample_values: ["2024-03-15", "2024-03-22", "2024-04-01"]
+    
+  MoveSize:
+    description: "Categorized size of the move (studio, 1BR, 2BR, etc.) affecting crew and truck requirements"
+    semantic_type: "category"
+    business_name: "Move Size Category"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3, 4]
+    
+  MoveType:
+    description: "Type classification of the move service (local, long-distance, commercial, residential)"
+    semantic_type: "category"
+    business_name: "Move Type"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3]
+    
+  ApproximateWeight:
+    description: "Estimated total weight of items to be moved, used for pricing and crew planning"
+    semantic_type: "measurement"
+    business_name: "Estimated Weight (lbs)"
+    data_classification: "Internal"
+    sample_values: [5000, 7500, 10000]
+    
+  Distance:
+    description: "Distance in miles between origin and destination addresses"
+    semantic_type: "measurement"
+    business_name: "Move Distance (miles)"
+    data_classification: "Internal"
+    sample_values: [25.5, 150.0, 300.2]
+    
+  Comments:
+    description: "Free-form notes about special requirements, customer requests, or move-specific details"
+    semantic_type: "notes"
+    business_name: "Move Notes"
+    data_classification: "Internal"
+    sample_values: ["Fragile items present", "Stairs at both locations", "Piano move required"]
+    
+  EstimatorDate:
+    description: "Date when the in-home estimate was conducted or scheduled"
+    semantic_type: "business_date"
+    business_name: "Estimate Date"
+    data_classification: "Internal"
+    sample_values: ["2024-02-15", "2024-02-20"]
+    
+  BookedDate:
+    description: "Date when the customer confirmed and booked the move service"
+    semantic_type: "business_date"
+    business_name: "Booking Date"
+    data_classification: "Internal"
+    sample_values: ["2024-02-18", "2024-02-25"]
+    
+  MoveCompletedDate:
+    description: "Actual date when the move service was completed and signed off"
+    semantic_type: "business_date"
+    business_name: "Completion Date"
+    data_classification: "Internal"
+    sample_values: ["2024-03-15", "2024-03-22"]
+    
+  CurrentWorkflowStage:
+    description: "Current stage in the move workflow process (lead, estimate, booking, execution, completion)"
+    semantic_type: "workflow_stage"
+    business_name: "Workflow Stage"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3, 4, 5]
+    
+  CurrentWorkflowStep:
+    description: "Specific step within the current workflow stage for detailed progress tracking"
+    semantic_type: "workflow_step"
+    business_name: "Workflow Step"
+    data_classification: "Internal"
+    sample_values: [1, 2, 3]
+    
+  CrewRating:
+    description: "Customer satisfaction rating for the crew performance (1-5 scale)"
+    semantic_type: "rating"
+    business_name: "Crew Rating"
+    data_classification: "Internal"
+    sample_values: [4.5, 5.0, 4.0]
+    
+  GoogleDistance:
+    description: "Distance calculation from Google Maps API for accurate routing and timing"
+    semantic_type: "measurement"
+    business_name: "Google Maps Distance"
+    data_classification: "Internal"
+    sample_values: [26.2, 152.1, 298.7]
+    
+  EstTime:
+    description: "Estimated time in hours required to complete the move service"
+    semantic_type: "duration"
+    business_name: "Estimated Hours"
+    data_classification: "Internal"
+    sample_values: [4.0, 8.0, 12.0]
+    
+  DateUpdated:
+    description: "Timestamp of the last modification to this move record"
+    semantic_type: "audit_timestamp"
+    business_name: "Last Updated Date"
+    data_classification: "Internal"
+    sample_values: ["2024-03-10", "2024-03-15"]
+    
+  DateCreated:
+    description: "Timestamp when this move record was first created in the system"
+    semantic_type: "audit_timestamp"
+    business_name: "Record Created Date"
+    data_classification: "Internal"
+    sample_values: ["2024-02-01", "2024-02-05"]
+
+# Logical column groupings for better understanding
+column_groups:
+  identifiers:
+    - "ID"
+    - "CustomerID"
+    - "BranchID"
+  addresses:
+    - "FromAddressInfoID"
+    - "ToAddressInfoID"
+  move_details:
+    - "MovingDate"
+    - "MoveSize"
+    - "MoveType"
+    - "ApproximateWeight"
+    - "Distance"
+    - "GoogleDistance"
+  workflow:
+    - "Status"
+    - "CurrentWorkflowStage"
+    - "CurrentWorkflowStep"
+  scheduling:
+    - "EstimatorDate"
+    - "EstimatorEndDate"
+    - "BookedDate"
+    - "MoveCompletedDate"
+  quality:
+    - "CrewRating"
+    - "Comments"
+  system_fields:
+    - "DateCreated"
+    - "DateUpdated"
+
+# Business questions this dataset can answer
+answerable_questions:
+  - question: "How many moves are scheduled for next month?"
+    sql_hint: "SELECT COUNT(*) FROM raw_move_orders WHERE MovingDate BETWEEN '2024-04-01' AND '2024-04-30'"
+    category: "Operational Planning"
+    
+  - question: "What is the average move distance by move type?"
+    sql_hint: "SELECT MoveType, AVG(Distance) as avg_distance FROM raw_move_orders GROUP BY MoveType"
+    category: "Service Analysis"
+    
+  - question: "Which customers have the highest crew ratings?"
+    sql_hint: "SELECT CustomerID, CrewRating FROM raw_move_orders WHERE CrewRating >= 4.5 ORDER BY CrewRating DESC"
+    category: "Customer Satisfaction"
+    
+  - question: "How many moves are currently in each workflow stage?"
+    sql_hint: "SELECT CurrentWorkflowStage, COUNT(*) FROM raw_move_orders GROUP BY CurrentWorkflowStage"
+    category: "Workflow Analysis"
+    
+  - question: "What is the distribution of move sizes?"
+    sql_hint: "SELECT MoveSize, COUNT(*) as move_count FROM raw_move_orders GROUP BY MoveSize ORDER BY move_count DESC"
+    category: "Capacity Planning"
+    
+  - question: "How long does it take from booking to completion on average?"
+    sql_hint: "SELECT AVG(DATEDIFF(day, BookedDate, MoveCompletedDate)) as avg_days FROM raw_move_orders WHERE MoveCompletedDate IS NOT NULL"
+    category: "Process Efficiency"
+    
+  - question: "Which branches handle the most long-distance moves?"
+    sql_hint: "SELECT BranchID, COUNT(*) FROM raw_move_orders WHERE Distance > 100 GROUP BY BranchID ORDER BY COUNT(*) DESC"
+    category: "Branch Performance"
+
+# LLM hints for SQL generation
+llm_hints:
+  preferred_aggregations: 
+    - "COUNT(*)"
+    - "AVG(Distance)"
+    - "AVG(CrewRating)"
+    - "SUM(ApproximateWeight)"
+    - "GROUP BY MoveType"
+    - "GROUP BY Status"
+  common_filters: 
+    - "WHERE Status IS NOT NULL"
+    - "WHERE MovingDate >= CURRENT_DATE"
+    - "WHERE CrewRating IS NOT NULL"
+    - "WHERE MoveCompletedDate IS NOT NULL"
+  join_patterns:
+    - "JOIN raw_customer_master ON CustomerID = raw_customer_master.ID"
+    - "Can join to address tables using FromAddressInfoID and ToAddressInfoID"
+    - "Can join to pricing data using MovePricingID"
+  data_quirks: 
+    - "Status codes: 1=Lead, 2=Scheduled, 3=In-Progress, 4=Completed, 5=Cancelled"
+    - "MoveType codes: 1=Local, 2=Long-Distance, 3=Commercial"
+    - "MoveSize codes: 1=Studio, 2=1BR, 3=2BR, 4=3BR+, 5=Commercial"
+    - "Distance is in miles, Weight is in pounds"
+    - "CrewRating is on 1-5 scale with decimals"
+    - "Some moves may not have completion dates if cancelled or in-progress"
